@@ -20,7 +20,7 @@ h2 {
 	text-align: center;
 }
 .logo {
-	height: 100px;
+	/* height: 100px; */
 }
 
 /*maxwidth + centering*/
@@ -150,9 +150,11 @@ main {
 	border-radius: 10px;
 }
 .items article img {
-	width: 160px;
-	height: 160px;
-	object-fit: cover;
+	width: 80%;
+	/* width: 160px;
+	height: 160px; */
+	/* object-fit: scale-down; */
+	/* object-fit: cover; */
 	border-radius: 10px;
 }
 .items article h3 {

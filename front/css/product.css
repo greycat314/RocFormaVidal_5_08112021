@@ -15,7 +15,10 @@
 	width: 50%;
 }
 .item__img {
-	width: 100%;
+	display: block;
+	/* width: 100%; */
+	/* background-color: aqua; */
+
 }
 .item__img img {
 	width: 100%;
