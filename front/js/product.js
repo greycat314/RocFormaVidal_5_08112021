@@ -9,13 +9,9 @@ if (i < 0 || i > 8 || isNaN(i) || i == "") {
 // Local Storage
 const jsonFiles = localStorage.getItem("data");
 const jsFiles = JSON.parse(jsonFiles);
-console.log(i)
-// console.log(jsFiles[i]);
 
-const number = Math.random();
-console.log(number);
-const nam = "currentSofa" + number;
-console.log(nam);
+console.log(i)
+console.log(jsFiles[i]);
 
 let currentSofa = jsFiles[i];
  // Products Features
@@ -44,7 +40,6 @@ document.getElementById("quantity").setAttribute("value", "1");
 
 // Control the number of articles
 updateQuantity(currentSofa);
-console.log(currentSofa);
 
 // Sofa thumbnails container
 var style = "text-align: center; width: 100%; margin-top: 30px; background-color: green;";
@@ -52,12 +47,9 @@ var div = makeElement("div", "thumbnails", style, "");
 document.querySelector("div .item__content").appendChild(div);
 
 displayThumbnails(currentSofa.imageUrl, currentSofa.altTxt);
-// const allThumbnails = displayThumbnails(currentSofa.imageUrl, currentSofa.altTxt);
-// console.log(allThumbnails);
 
 // Cart
 const response = cart();
-// console.log(response);
 
 // ==================== Functions ==================== //
 function makeImg(src, alt, width, height) {
@@ -103,8 +95,6 @@ function displayImage(image, colors, sofa = currentSofa) {
         sofa.imageUrl = address;
 
         sofa.chosenColor = colorName;
-        // console.log(currentSofa);
-        // console.log(currentSofa.imageUrl);
     })
 }
 
@@ -151,17 +141,20 @@ function makeThumbnails(src, alt, width, height, quantity) {
 }
 
 // Cart
-function cart(sofa = currentSofa) {
-    if (typeof sofaCart == "undefined") {sofaCart = new Array();}
+function cart(sofa) {
+    if (typeof sofaCart == "undefined") {
+        sofaCart = new Array();
+    }
+    else {
+        const sofaJson = JSON.stringify(sofa);
+        sofaCart.push(sofaJson);
+        console.table(sofaCart);
+        // console.table(currentSofa);
 
-    const number = Math.random();
-    console.log(number);
-    window["nam" + number] = currentSofa;
-    console.log(window["nam" + number]);
-    
-    sofaCart.push(sofa);
-    console.log(sofaCart);
-    return sofaCart
+        let cartJsFiles = JSON.parse(sofaJson);
+        console.table(cartJsFiles);
+    }
+
 }
 
 function displayThumbnails() {
@@ -172,19 +165,25 @@ function displayThumbnails() {
         document.querySelector("div #thumbnails").appendChild(div);
 
         const sofaQuantity = document.getElementById("quantity").value;
-        // console.log(sofaUrl, txt, "*******");
         const thumbnails = makeThumbnails(currentSofa.imageUrl, currentSofa.altTxt, 60, 60, sofaQuantity);
         div.append(thumbnails[0], thumbnails[1]);
-        console.log(thumbnails[0], thumbnails[1]);
+        // console.log(thumbnails[0], thumbnails[1]);
         // console.log(currentSofa);
-        cart();
-        // const value = cart(currentSofa);
-        // console.log(value);
+
+        cart(currentSofa);
     });
 }
 
 
+// function remplaçant(clé, valeur) {
+//     if (typeof valeur === "string") {
+//         return undefined;
+//     }
+//     return valeur;
+// }
 
+// var toto = {fondation: "Mozilla", modèle: "boîte", semaine: 45, transport: "bus", mois: 7};
+// console.log(JSON.stringify(toto, remplaçant)); // {"semaine":45, "mois":7}
 
 
 
