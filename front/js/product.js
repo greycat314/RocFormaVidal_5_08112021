@@ -12,7 +12,12 @@ const jsFiles = JSON.parse(jsonFiles);
 console.log(i)
 // console.log(jsFiles[i]);
 
-const currentSofa = jsFiles[i];
+const number = Math.random();
+console.log(number);
+const nam = "currentSofa" + number;
+console.log(nam);
+
+let currentSofa = jsFiles[i];
  // Products Features
 const {colors, _id, name, price, imageUrl, description, altTxt} = currentSofa; //Destructuring
 currentSofa.quantity = Number(1);
@@ -40,23 +45,19 @@ document.getElementById("quantity").setAttribute("value", "1");
 // Control the number of articles
 updateQuantity(currentSofa);
 console.log(currentSofa);
-// if (typeof sofaCart == "undefined") {sofaCart = new Array();}
-// sofaCart.push(currentSofa);
-// console.log(sofaCart);
-
-// const x = document.getElementById("quantity").getAttribute("value");
 
 // Sofa thumbnails container
 var style = "text-align: center; width: 100%; margin-top: 30px; background-color: green;";
 var div = makeElement("div", "thumbnails", style, "");
 document.querySelector("div .item__content").appendChild(div);
 
-const allThumbnails = displayThumbnails();
+displayThumbnails(currentSofa.imageUrl, currentSofa.altTxt);
+// const allThumbnails = displayThumbnails(currentSofa.imageUrl, currentSofa.altTxt);
 // console.log(allThumbnails);
 
 // Cart
 const response = cart();
-console.log(response);
+// console.log(response);
 
 // ==================== Functions ==================== //
 function makeImg(src, alt, width, height) {
@@ -87,10 +88,11 @@ function colorsOption() {
 function displayImage(image, colors, sofa = currentSofa) {
     const imageUrl = image.src;
     const select = document.getElementById("colors");
+    
     // Change image when color sofa is selected
     select.addEventListener("change", event => {
          // Only letters or numbers for the name of the colors. Names of colors : Black, Red, Black/Red, Black/Yellow, Navy, etc...
-        colorName = alphanumericCharacters(event.target.value);
+        const colorName = alphanumericCharacters(event.target.value);
         // Image URI
         const match = imageUrl.match(/([a-z]+)([0-9]+)(?:.jpeg)/i);
         const sofaName = match[1]+match[2];
@@ -151,12 +153,18 @@ function makeThumbnails(src, alt, width, height, quantity) {
 // Cart
 function cart(sofa = currentSofa) {
     if (typeof sofaCart == "undefined") {sofaCart = new Array();}
+
+    const number = Math.random();
+    console.log(number);
+    window["nam" + number] = currentSofa;
+    console.log(window["nam" + number]);
+    
     sofaCart.push(sofa);
-    // console.log(sofaCart);
+    console.log(sofaCart);
     return sofaCart
 }
 
-function displayThumbnails(sofaUrl, txt) {
+function displayThumbnails() {
     document.getElementById("addToCart").addEventListener("click", event => {
         // Creation of thumbnails
         const style = "display: inline-block; width: 114px; background-color: maroon;";
@@ -164,45 +172,17 @@ function displayThumbnails(sofaUrl, txt) {
         document.querySelector("div #thumbnails").appendChild(div);
 
         const sofaQuantity = document.getElementById("quantity").value;
-        // console.log(sofaUrl);
+        // console.log(sofaUrl, txt, "*******");
         const thumbnails = makeThumbnails(currentSofa.imageUrl, currentSofa.altTxt, 60, 60, sofaQuantity);
         div.append(thumbnails[0], thumbnails[1]);
-        console.log(thumbnails[0]);
-
-        cart(currentSofa);
-        // if (typeof sofaCart == "undefined") {sofaCart = new Array();}
-        // sofaCart.push(currentSofa);
-        // console.log(sofaCart);
-        // return sofaCart
+        console.log(thumbnails[0], thumbnails[1]);
+        // console.log(currentSofa);
+        cart();
+        // const value = cart(currentSofa);
+        // console.log(value);
     });
 }
 
-function cart(sofa = currentSofa) {
-    if (typeof sofaCart == "undefined") {sofaCart = new Array();}
-    sofaCart.push(sofa);
-    console.log(sofaCart);
-    return sofaCart
-}
-
-// function displayThumbnails(sofa = currentSofa, sofaUrl = currentSofa.imageUrl, txt = currentSofa.altTxt) {
-//     document.getElementById("addToCart").addEventListener("click", event => {
-//         // Creation of thumbnails
-//         var style = "display: inline-block; width: 114px;";
-//         var div = makeElement("div", "", style, "");
-//         document.querySelector("div #thumbnails").appendChild(div);
-
-//         const sofaQuantity = document.getElementById("quantity").value;
-//         const tab = makeThumbnails(sofaUrl, txt, 60, 60, sofaQuantity);
-//         console.log(tab[0]);
-//         div.append(tab[0], tab[1]);
-
-//         if (typeof sofaCart == "undefined") {sofaCart = new Array();}
-        
-//         sofaCart.push(sofa);
-//         console.log(sofaCart);
-//         return sofaCart
-//     });
-// }
 
 
 
