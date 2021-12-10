@@ -1,189 +1,247 @@
-// url argument
-const i = window.location.search.substring(1);
+// ===================================== url argument ==================================================
+const param = getIdFromParams();
 
-// If manual modification of the value transmitted by the Url
-if (i < 0 || i > 8 || isNaN(i) || i == "") {
-    window.location.href = "index.html";
-}
 
-// Local Storage
-const jsonFiles = localStorage.getItem("data");
-const jsFiles = JSON.parse(jsonFiles);
+// ===================== If manual modification of the value transmitted by the Url =================================
+paramControl();
 
-console.log(i)
-console.log(jsFiles[i]);
 
-let currentSofa = jsFiles[i];
- // Products Features
-const {colors, _id, name, price, imageUrl, description, altTxt} = currentSofa; //Destructuring
+// ========================================= Data =====================================================
+const cart = [];
+const map = new Map();
+
+
+// ===================================== Local Storage ==================================================
+const jsonFiles = localStorage.getItem("sofaData");
+const sofaFiles = JSON.parse(jsonFiles);
+
+let currentSofa = sofaFiles[param];
+
+const {colors, color, _id, name, price, imageUrl, description, altTxt, style} = currentSofa; // Destructuring
 currentSofa.quantity = Number(1);
-currentSofa.chosenColor = currentSofa.colors[0];
 
-// Html structure
-const image = makeImg(imageUrl, altTxt, 200, 200);
-document.querySelector("div .item__img").append(image);
+const data = localStorage.getItem("mapData");
 
-document.getElementById("title").textContent = name;
 
-document.getElementById("price").textContent = price;
+// ======================================= Cart ===================================================
+thumbnailsBox();
+document
+    .getElementById("addToCart")
+    .addEventListener("click", () => {
+        addToCart(currentSofa);
+        displayThumbnails();
+});
 
-document.getElementById("description").textContent = description;
 
-// Creation of option tags in select tag (name="color-select")
+// ====================================== Html structure ==================================================
+let image = img(currentSofa.imageUrl, currentSofa.altTxt, 200, 200);
+imgBox(image);
+
+
+// ========== Creation of option tags in select tag (name="color-select")
 colorsOption();
 
-// Change image when color sofa is selected
-displayImage(image, colors);
 
-// Set the number of articles to one when opening the page
+// ========== Change image when color sofa is selected
+displayImage();
+
+
+// ========== Change sofa image when an other sofa color is selected
 document.getElementById("quantity").setAttribute("value", "1");
 
-// Control the number of articles
-updateQuantity(currentSofa);
 
-// Sofa thumbnails container
-var style = "text-align: center; width: 100%; margin-top: 30px; background-color: green;";
-var div = makeElement("div", "thumbnails", style, "");
-document.querySelector("div .item__content").appendChild(div);
+// ========== Control the quantity of sofa
+quantityControl();
 
-displayThumbnails(currentSofa.imageUrl, currentSofa.altTxt);
 
-// Cart
-const response = cart();
+// // ========== Thumbnails box
+// thumbnailsBox();
 
-// ==================== Functions ==================== //
-function makeImg(src, alt, width, height) {
+
+// ===================================== Classes ==================================================
+class sofa {
+    constructor(id, name, price, quantity, imgUrl, altTxt, description, color, style) {
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.imgUrl = imgUrl;
+        this.altTxt = altTxt;
+        this.description = description;
+        this.color = color;
+        this.id = id + "-" + this.color; // An identifier for each color of each sofa
+        this.style = style; // kanap01
+        // const newDescription = description.split("bleu").join("Bleu");
+        // const newColor = color.split("/").join(""); // For sofa with two colors : Black/Yellow --> BlackYellow, ...
+        this.itemName = this.style + this.color;
+    }
+}
+
+
+// ====================================== Functions ===================================================
+function getIdFromParams() {
+    return window.location.search.substring(1);
+}
+
+
+function paramControl() {
+    if (param < 0 || param > 8 || isNaN(param) || param == "") {
+        window.location.href = "index.html";
+    }
+}
+
+
+// function explode(value, separator) {
+//     const itemName = imageUrl.split("/")[4].split(".")[0];
+// }
+
+
+function img(src, alt, width, height) {
     const tag = document.createElement("img");
     tag.setAttribute("src", src);
     tag.setAttribute("alt", alt);
     tag.setAttribute("width", width);
-    tag.setAttribute("height", height);  
-    return tag
+    tag.setAttribute("height", height);
+    return tag;
 }
 
-function alphanumericCharacters(string) {
-    return string.replace(/[^a-z0-1]/i, "");
+
+function imgBox(value) {
+    document.querySelector("div .item__img").append(value);
+    document.getElementById("title").textContent = currentSofa.name;
+    document.getElementById("price").textContent = currentSofa.price;
+    document.getElementById("description").textContent = currentSofa.description;
 }
 
-// Creation of option tags in select tag (name="color-select")
+
+function thumbnailsBox() {
+    var style = "text-align: center; width: 100%; margin-top: 30px;";
+    var div = makeElement("div", "thumbnails", style, "");
+    // div.innerText = "Je suis le meilleur";
+    document.querySelector("div .item__content").appendChild(div);
+}
+
+
+// ========== Creation of option tags in select tag (name="color-select")
 function colorsOption() {
     for (let tint of colors) {
         let link = document.createElement("option");
         link.setAttribute("value", tint);
         link.textContent = tint;
-    
+
         document.getElementById("colors").appendChild(link);
     }
 }
 
-// Change image when color sofa is selected
-function displayImage(image, colors, sofa = currentSofa) {
-    const imageUrl = image.src;
-    const select = document.getElementById("colors");
-    
-    // Change image when color sofa is selected
-    select.addEventListener("change", event => {
-         // Only letters or numbers for the name of the colors. Names of colors : Black, Red, Black/Red, Black/Yellow, Navy, etc...
-        const colorName = alphanumericCharacters(event.target.value);
-        // Image URI
-        const match = imageUrl.match(/([a-z]+)([0-9]+)(?:.jpeg)/i);
-        const sofaName = match[1]+match[2];
-        const uri = "images/" + sofaName   + colorName + ".jpeg";
 
-        const address = (select.value != colors[0]) ? "http://localhost:3000/" + uri : imageUrl;
-        document.querySelector(".item__img img").setAttribute("src", address);
-        sofa.imageUrl = address;
-
-        sofa.chosenColor = colorName;
-    })
-}
-
-// Control the number of articles
-function updateQuantity(sofa) {
-    document.getElementById("quantity").addEventListener("change", event => {
-        if (event.target.value <= 0) {event.target.value = 1;};
-        if (event.target.value > 100) {event.target.value = 100;};
-        document.getElementById("quantity").setAttribute("value", event.target.value );
-        sofa.quantity = Number(event.target.value);
+// ========== Change image when color sofa is selected
+function displayImage() {
+    document
+        .getElementById("colors")
+        .addEventListener("change", (event) => {
+            const colorChoice = event.target.value.split("/").join(""); // Black/Red --> BlackRed
+            const newUrl = changeUrl(colorChoice);
+            document.querySelector(".item__img img").setAttribute("src", newUrl);
+            
+            currentSofa.color = colorChoice;
+            currentSofa.imageUrl = newUrl;
     });
 }
 
-function makeImg(src, alt, width, height) {
-    const tag = document.createElement("img");
-    tag.setAttribute("src", src);
-    tag.setAttribute("alt", alt);
-    tag.setAttribute("width", width);
-    tag.setAttribute("height", height);  
-    return tag
-}
+// function test(object) {
+//     // Object.defineProperty(object, color, red)
 
-function makeElement(type = "p", id = "", style = "", content = "") {
-    const tag = document.createElement(type); 
-    if (id != "") {
-        tag.setAttribute("id", id);
-    };
-    if (style != "") {
-        tag.setAttribute("style", style);
-    };
-    tag.innerHTML = content;
-    return tag
-}
-
-function makeThumbnails(src, alt, width, height, quantity) {
-    const img = makeImg(src, alt, width, height);
-    img.setAttribute("style","border-radius: 50px; margin: 5px 0;");
-
-    // Quantity for each item
-    const tag = document.createElement("span");
-    tag.textContent = quantity;
-    const tab = [img, tag];
-    return tab
-}
-
-// Cart
-function cart(sofa) {
-    if (typeof sofaCart == "undefined") {
-        sofaCart = new Array();
-    }
-    else {
-        const sofaJson = JSON.stringify(sofa);
-        sofaCart.push(sofaJson);
-        console.table(sofaCart);
-        // console.table(currentSofa);
-
-        let cartJsFiles = JSON.parse(sofaJson);
-        console.table(cartJsFiles);
-    }
-
-}
-
-function displayThumbnails() {
-    document.getElementById("addToCart").addEventListener("click", event => {
-        // Creation of thumbnails
-        const style = "display: inline-block; width: 114px; background-color: maroon;";
-        const div = makeElement("div", "", style, "");
-        document.querySelector("div #thumbnails").appendChild(div);
-
-        const sofaQuantity = document.getElementById("quantity").value;
-        const thumbnails = makeThumbnails(currentSofa.imageUrl, currentSofa.altTxt, 60, 60, sofaQuantity);
-        div.append(thumbnails[0], thumbnails[1]);
-        // console.log(thumbnails[0], thumbnails[1]);
-        // console.log(currentSofa);
-
-        cart(currentSofa);
-    });
-}
-
-
-// function remplaçant(clé, valeur) {
-//     if (typeof valeur === "string") {
-//         return undefined;
-//     }
-//     return valeur;
+//     // return object.color = "aaaa"
 // }
 
-// var toto = {fondation: "Mozilla", modèle: "boîte", semaine: 45, transport: "bus", mois: 7};
-// console.log(JSON.stringify(toto, remplaçant)); // {"semaine":45, "mois":7}
 
+function changeUrl(color) {
+    // http://localhost:3000/images/kanap01Blue.jpeg --> http://localhost:3000/images/kanap01Red.jpeg
+    const value = currentSofa.imageUrl.split('/', 4).join("/") + "/" + currentSofa.style + color + ".jpeg";
+
+    return value
+}
+
+
+function quantityControl() {
+    document.getElementById("quantity").addEventListener("change", (event) => {
+        if (event.target.value <= 0) {
+            event.target.value = 1;
+        }
+        if (event.target.value > 100) {
+            event.target.value = 100;
+        }
+        document
+            .getElementById("quantity")
+            .setAttribute("value", event.target.value);
+
+        currentSofa.quantity = Number(event.target.value);
+    });
+}
+
+
+function makeElement(type = "p", id = "", style = "", content = "") {
+    const tag = document.createElement(type);
+    if (id != "") {
+        tag.setAttribute("id", id);
+    }
+    if (style != "") {
+        tag.setAttribute("style", style);
+    }
+    tag.innerHTML = content;
+    return tag;
+}
+
+
+function addToCart() {    
+    const item = new sofa(
+        currentSofa._id,
+        currentSofa.name,
+        currentSofa.price,
+        currentSofa.quantity,
+        currentSofa.imageUrl,
+        currentSofa.description,
+        currentSofa.altTxt,
+        currentSofa.color,
+        currentSofa.style
+    );
+    
+    // ========== Sofas map
+    map.set(item.id, item);
+}
+
+
+function displayThumbnails() {
+    document.getElementById("thumbnails").textContent = "";
+    var mapIter = map.entries();
+    for (let element of mapIter) {
+        const src = element[1].imgUrl;
+        const alt  = element[1].altTxt;
+        const quantity = element[1].quantity;
+        const id = element[1].itemName;
+
+        // Thumbnail
+        const elt = makeThumbnail(src, alt, 90, 90);
+        
+        // Thumbnails block
+        const style = "display: inline-block; width: 140px;";
+        const div = makeElement("div", id, style, "");
+        
+        div.appendChild(elt);
+        
+        // Quantity
+        const span = makeElement("span", "", "", quantity);
+        
+        div.appendChild(span);
+
+        document.getElementById("thumbnails").append(div);
+    }
+}
+
+
+function makeThumbnail(src, alt, width, height) {
+    const thumbnail = img(src, alt, width, height);
+    thumbnail.setAttribute("style", "border-radius: 50px; margin: 5px 0;");
+    return thumbnail;
+}
 
 
