@@ -1,35 +1,31 @@
-// ===================================== url argument ==================================================
+// ===================================== url argument ===================================================
 const param = getIdFromParams();
 
 
 // ===================== If manual modification of the value transmitted by the Url =================================
-paramControl();
+if (isParamInvalid(param)) redirectToHome();
 
 
-// ========================================= Data =====================================================
-const cart = [];
-const map = new Map();
-
+// ========================================= Data ======================================================
+idArray = [];
+const cartMap = new Map();
 
 // ===================================== Local Storage ==================================================
-const jsonFiles = localStorage.getItem("sofaData");
-const sofaFiles = JSON.parse(jsonFiles);
-
-let currentSofa = sofaFiles[param];
+// console.log(window.location.search.substring(1));
+let currentSofa = subtractFromCache("sofaData")[param];
 
 const {colors, color, _id, name, price, imageUrl, description, altTxt, style} = currentSofa; // Destructuring
 currentSofa.quantity = Number(1);
 
-const data = localStorage.getItem("mapData");
+// localStorage.removeItem("sofaData");
 
-
-// ======================================= Cart ===================================================
+// ========================================= Cart =====================================================
 thumbnailsBox();
 document
     .getElementById("addToCart")
     .addEventListener("click", () => {
-        addToCart(currentSofa);
-        displayThumbnails();
+        const cartMap = addToCart(currentSofa);
+        displayThumbnails(cartMap);
 });
 
 
@@ -59,7 +55,7 @@ quantityControl();
 
 
 // ===================================== Classes ==================================================
-class sofa {
+class Sofa {
     constructor(id, name, price, quantity, imgUrl, altTxt, description, color, style) {
         this.name = name;
         this.price = price;
@@ -83,16 +79,13 @@ function getIdFromParams() {
 }
 
 
-function paramControl() {
-    if (param < 0 || param > 8 || isNaN(param) || param == "") {
-        window.location.href = "index.html";
-    }
+function isParamInvalid(param) {
+    return param < 0 || param > 8 || isNaN(param) || param == ""
 }
 
-
-// function explode(value, separator) {
-//     const itemName = imageUrl.split("/")[4].split(".")[0];
-// }
+function redirectToHome() {
+    window.location. href = "index.html";
+}
 
 
 function img(src, alt, width, height) {
@@ -116,7 +109,6 @@ function imgBox(value) {
 function thumbnailsBox() {
     var style = "text-align: center; width: 100%; margin-top: 30px;";
     var div = makeElement("div", "thumbnails", style, "");
-    // div.innerText = "Je suis le meilleur";
     document.querySelector("div .item__content").appendChild(div);
 }
 
@@ -146,12 +138,6 @@ function displayImage() {
             currentSofa.imageUrl = newUrl;
     });
 }
-
-// function test(object) {
-//     // Object.defineProperty(object, color, red)
-
-//     // return object.color = "aaaa"
-// }
 
 
 function changeUrl(color) {
@@ -192,31 +178,48 @@ function makeElement(type = "p", id = "", style = "", content = "") {
 }
 
 
-function addToCart() {    
-    const item = new sofa(
-        currentSofa._id,
-        currentSofa.name,
-        currentSofa.price,
-        currentSofa.quantity,
-        currentSofa.imageUrl,
-        currentSofa.description,
-        currentSofa.altTxt,
-        currentSofa.color,
-        currentSofa.style
+function addToCart(sofa) {    
+    const item = new Sofa(
+        sofa._id,
+        sofa.name,
+        sofa.price,
+        sofa.quantity,
+        sofa.imageUrl,
+        sofa.description,
+        sofa.altTxt,
+        sofa.color,
+        sofa.style
     );
     
     // ========== Sofas map
-    map.set(item.id, item);
+    // const cartMap = new Map();
+    cartMap.set(item.id, item); 
+    addToCache(item.id, item);
+    return cartMap
 }
 
 
-function displayThumbnails() {
+function addToCache(name, data) {
+    localStorage.setItem(name, JSON.stringify(data));
+}
+
+
+function subtractFromCache(data) {
+    const jsonFiles = localStorage.getItem(data);
+    const object = JSON.parse(jsonFiles);
+    return object
+}
+
+
+function displayThumbnails(item) {
     document.getElementById("thumbnails").textContent = "";
-    var mapIter = map.entries();
+
+    const mapIter = item.entries();
     for (let element of mapIter) {
         const src = element[1].imgUrl;
         const alt  = element[1].altTxt;
         const quantity = element[1].quantity;
+        const price = element[1].price;
         const id = element[1].itemName;
 
         // Thumbnail
@@ -230,8 +233,12 @@ function displayThumbnails() {
         
         // Quantity
         const span = makeElement("span", "", "", quantity);
-        
         div.appendChild(span);
+
+        // Total price for every sofa
+        const totalPrice = (price * quantity).toLocaleString("fi-FI");
+        const p = makeElement("p", "", "background-Color: #000; text-align: center; width: 95%; font-weight: 600; border-radius: 10px;", totalPrice + "€");
+        div.appendChild(p);
 
         document.getElementById("thumbnails").append(div);
     }
@@ -244,4 +251,8 @@ function makeThumbnail(src, alt, width, height) {
     return thumbnail;
 }
 
-
+function addToArray(array, item) {
+    if (array.includes(item) === false) {
+        array.push(item);
+    }
+}
