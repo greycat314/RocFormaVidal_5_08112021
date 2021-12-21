@@ -23,7 +23,7 @@ h2 {
 	margin-bottom: 30px;
 }
 .cart__item__img {
-	width: 25%;
+	/* width: 25%; */
 }
 .cart__item__img img {
 	width: 100%;
@@ -134,7 +134,9 @@ h2 {
 	box-shadow: rgb(42 18 206 / 90%) 0 0 22px 6px;
 }
 
-
+#homeButton:hover {
+	box-shadow: rgb(42 18 206 / 90%) 0 0 22px 6px;
+}
 
 /***************/
 /*Media queries*/
