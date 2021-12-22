@@ -24,6 +24,8 @@ const cartMap = new Map();
 
 // ===================================== Local Storage ==================================================
 let currentSofa = subtractFromCache("catalog")[param];
+console.log(subtractFromCache("catalog"))
+
 
 const {colors, color, _id, name, price, imageUrl, description, altTxt, style} = currentSofa; // Destructuring
 currentSofa.quantity = Number(1);

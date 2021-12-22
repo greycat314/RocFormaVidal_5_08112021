@@ -1,5 +1,5 @@
 import { createTag } from "./manipDom.js";
-import { disableButton } from "./manipDom.js";
+import { activateOrDisable } from "./manipDom.js";
 import { subtractFromCache } from "./dataCache.js";
 
 export function limitQuantity(value) {
@@ -20,8 +20,7 @@ export function updateTotalPrice() {
             cartTotalPrice += object.price * object.quantity;
         }
     }
-    disableButton(cartTotalPrice);
-    
+    activateOrDisable("#order", cartTotalPrice);
     return cartTotalPrice
 }
 
@@ -127,21 +126,21 @@ export function findItemName(url) {
     return style
 }
 
-export function CreateUrl(url, color) {
-    // http://localhost:3000/images/kanap01.jpeg --> http://localhost:3000/images/kanap01Blue.jpeg
+// export function CreateUrl(url, color) {
+//     // http://localhost:3000/images/kanap01.jpeg --> http://localhost:3000/images/kanap01Blue.jpeg
 
-    // ===== Explode Url
-    const oldUrl = url.split('/');
-    const oldSofaName = oldUrl[4].split("."); // ['kanap01', 'jpeg']
+//     // ===== Explode Url
+//     const oldUrl = url.split('/');
+//     const oldSofaName = oldUrl[4].split("."); // ['kanap01', 'jpeg']
 
-    // ===== Join Url
-    const colorFilter =  color.split("/").join("");  // Colors : Blue, White, Black/Red, ...
-    const newSofaName = oldSofaName[0] + colorFilter + "." + oldSofaName[1]; // kanap01Blue.jpeg
-    oldUrl[4] = newSofaName;
+//     // ===== Join Url
+//     const colorFilter =  color.split("/").join("");  // Colors : Blue, White, Black/Red, ...
+//     const newSofaName = oldSofaName[0] + colorFilter + "." + oldSofaName[1]; // kanap01Blue.jpeg
+//     oldUrl[4] = newSofaName;
 
-    newUrl = oldUrl.join("/");
-    return newUrl
-}
+//     newUrl = oldUrl.join("/");
+//     return newUrl
+// }
 
 export function makeLink(index) {
     const lien = document.createElement("a");
@@ -194,4 +193,14 @@ export function displayThumbnails(item) {
 
         document.getElementById("thumbnails").append(div);
     }
+}
+
+
+export function displayId(value) {
+    document
+        .getElementById("orderId")
+        .setAttribute("style", "display: inline-block; padding-top: 10px; font-size: 1.4rem; font-weight: 600;");
+    document
+        .getElementById("orderId")   
+        .textContent = value;
 }

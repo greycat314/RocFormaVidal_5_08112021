@@ -1,5 +1,3 @@
-// import { limitQuantity } from "./utils.js";
-
  // Create tag with these attributes
 export function createTag(tag, ...theAttributes) {
     const item = document.createElement(tag);
@@ -19,45 +17,57 @@ export function validateInput(id, pattern, errorMessage = "Erreur.", quantity) {
 
             document.querySelector("#" + id).value = changeMultipleSpaceByOne;
             if (pattern.test(changeMultipleSpaceByOne)) {
-                document
-                    .querySelector("#" + id + "ErrorMsg")
-                    .textContent = "";
+                deleteTextContent("#" + id + "ErrorMsg");
                     
                 document
                     .querySelector("#" + id)
                     .textContent = changeMultipleSpaceByOne;
 
                 if (quantity != 0) {
-                    document
-                    .getElementById("order")
-                    .removeAttribute("disabled");
+                    activateOrDisable("#order", 1);
                     
                 document
                     .getElementById("order")    
                     .removeAttribute("style");
-                }
-                
-                
+                }    
             }
             else {
-                document
-                    .querySelector("#" + id + "ErrorMsg")
-                    .textContent = errorMessage;
+                displayTextContent("#" + id + "ErrorMsg", errorMessage);
 
-                document
-                    .getElementById("order")
-                    .disabled = "true";
+                activateOrDisable("#order", 0);
 
                 document
                     .getElementById("order")
                     .setAttribute("style", "cursor: not-allowed; filter: blur(2px);")
-                
+
                 document
                     .querySelector("#" + id + "ErrorMsg")
                     .setAttribute("style", "color: red; background-color: white; font-size: .8rem; font-weight: 600; margin: 5px 0; padding: 0 5px; border-radius: 5px;")
             }
         });
 }
+
+
+export function deleteTextContent(element) {
+    document.querySelector(element).textContent = "";
+}
+
+
+export function displayTextContent(element, text) {
+    document.querySelector(element).textContent = text;
+}
+
+
+export function activateOrDisable(element, value) {
+    if (value == 0) {
+        document.querySelector(element).disabled = "true";
+        document.querySelector(element).setAttribute("style", "cursor: not-allowed; filter: blur(2px);")
+    }
+    else {
+        document.querySelector(element).removeAttribute("disabled")
+    }
+}
+
 
 export function getColorSofa(colors) {
     for (let tint of colors) {
@@ -66,17 +76,5 @@ export function getColorSofa(colors) {
         link.textContent = tint;
 
         document.getElementById("colors").appendChild(link);
-    }
-}
-
-export function disableButton(value) {
-    if (value == 0) {
-        document
-        .getElementById("order")
-        .disabled = "true";
-
-        document
-            .getElementById("order")
-            .setAttribute("style", "cursor: not-allowed; filter: blur(2px);")
     }
 }

@@ -11,7 +11,6 @@ import { createTag } from "./mod/manipDom.js";
 import { validateInput } from "./mod/manipDom.js";
 
 for (var i = 0; i < localStorage.length; i++) {
-    // const object = subtractFromCache(localStorage.key(i));
     subtractFromCache(localStorage.key(i));
 }
 
@@ -30,6 +29,12 @@ validateInput("lastName", /^[a-z ]+$/i, "Caractères autorisées : lettres et es
 validateInput("address", /^[a-z0-9 ]+$/i, "Caractères autorisées : lettres, chiffres et espacements.", totalQuantity);
 validateInput("city", /^[a-z ]+$/i, "Caractères autorisées : lettres et espacements.", totalQuantity);
 validateInput("email", /^[a-z0-9]+[a-z0-9.]+@{1}[a-z0-9.]+[a-z0-9]+$/i, "Caractères autorisées : lettres, point,  un @ est obligatoire. Ne doit pas commencer ou se terminer par un point.", totalQuantity);
+
+if (totalPrice == 0) {
+    document
+        .getElementById("order")
+        .setAttribute("style", "cursor: not-allowed; filter: blur(2px);");
+}
 
 
 // ====================================== Home button ===================================================
