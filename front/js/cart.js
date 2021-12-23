@@ -9,6 +9,8 @@ import { removeThumbnail } from "./mod/utils.js";
 import { createBoxArticle } from "./mod/utils.js";
 import { createTag } from "./mod/manipDom.js";
 import { validateInput } from "./mod/manipDom.js";
+import { displayThumbnails } from "./mod/manipDom.js";
+
 
 for (var i = 0; i < localStorage.length; i++) {
     subtractFromCache(localStorage.key(i));
@@ -43,45 +45,3 @@ const homeButton = createTag("button", "id", "homeButton", "onclick", "window.lo
 homeButton.textContent = "Accueil";
 document.querySelector(".cart__order__form__submit").append(homeButton);
 
-
-// ====================================== Functions ===================================================
-function displayThumbnails() {
-    for (var i = 0; i < localStorage.length; i++) {
-        const object = subtractFromCache(localStorage.key(i));
-        const src = object.imgUrl;
-        const alt  = object.altTxt;
-        const quantity = object.quantity;
-        const price = object.price;
-        const name = object.name;
-        const color = object.color;
-        const id = object.id;
-
-        if (object.name != null) {
-            const article = createBoxArticle(name, id, color, src, alt, price,quantity);
-
-            document.querySelector("#cart__items").append(article);
-
-            document
-                .getElementById("remove-" + id)
-                .addEventListener("click", () => {
-                removeThumbnail(id);
-            });
-
-            document
-                .getElementById("quantity-" + id)
-                .addEventListener("change", (event) => {
-                    event.target.value = limitQuantity(event.target.value);
-                    let currentSofa = subtractFromCache(id);
-                    currentSofa.quantity = Number(event.target.value);
-                    
-                    addToCache(id, currentSofa)
-
-                    updateQuantity(id, currentSofa.quantity);
-
-                    const totalPrice = updateTotalPrice();
-                    const totalQuantity = updateTotalQuantity();
-                    displayQuantityAndTotalPrice(totalPrice, totalQuantity);
-            });
-        }
-    }
-}
