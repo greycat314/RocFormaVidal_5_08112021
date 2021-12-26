@@ -11,11 +11,14 @@ export function addToCache(name, data) {
 }
 
 
-export function formData() {
-    return location.search.substring(1).split("&")
+export function getParamsFromUrl() {
+    const paramsString = decodeURIComponent(location.search.substring(1).split("&"))
+    console.log(paramsString)
+    return 
 }
 
 
-export function formDataTable(data) {
+export function getFormEntries(data) {
+    console.log(decodeURIComponent(data).split(","))
     return decodeURIComponent(data).split(",")
 }

@@ -6,8 +6,8 @@ import { redirectToHome } from "./mod/utils.js";
 import { displayThumbnails } from "./mod/utils.js";
 import { createTag } from "./mod/manipDom.js";
 import { getColorSofa } from "./mod/manipDom.js";
-import { addToCache } from "./mod/datacache.js";
-import { subtractFromCache } from "./mod/datacache.js";
+import { addToCache, subtractFromCache } from "./mod/datacache.js";
+
 
 
 // ===================================== url argument ===================================================

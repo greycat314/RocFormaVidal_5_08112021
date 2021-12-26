@@ -50,7 +50,7 @@ export function displayQuantityAndTotalPrice(value, quantity) {
         .textContent = "Total (" + Number(quantity) + " article" + letter + ") : ";
     document
         .getElementById("totalPrice")
-        .textContent = value.toLocaleString("fi-FI") + "€";
+        .textContent = value.toLocaleString("fi") + "€";
 }
 
 export function removeThumbnail(id) {
@@ -78,7 +78,7 @@ export function createBoxArticle(name, id, color, src, alt, price,quantity) {
     // Content description
     const h2 = createTag("h2", "style", "margin: 0; font-size: 1.8rem;"); h2.textContent = name;
     const pColor = createTag("p", "style", "margin: 5px 0;"); pColor.textContent = color;
-    const pPrice = createTag("p", "style", "margin: 5px 0;"); pPrice.textContent = price.toLocaleString() + "€";
+    const pPrice = createTag("p", "style", "margin: 5px 0;"); pPrice.textContent = price.toLocaleString("fi") + "€";
     boxDescription.append(h2, pColor, pPrice);
 
     // Content settings

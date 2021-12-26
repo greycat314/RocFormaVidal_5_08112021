@@ -1,4 +1,4 @@
-import { limitQuantity } from "./mod/utils.js";
+import { findItemName, limitQuantity } from "./mod/utils.js";
 import { updateTotalPrice } from "./mod/utils.js";
 import { updateTotalQuantity } from "./mod/utils.js";
 import { updateQuantity } from "./mod/utils.js";
@@ -38,10 +38,81 @@ if (totalPrice == 0) {
         .setAttribute("style", "cursor: not-allowed; filter: blur(2px);");
 }
 
+document
+    .querySelector(".cart__order__form")
+    .removeAttribute("action");
+    
+document
+    .querySelector("#order")
+    .addEventListener("click", submitForm)
+
 
 // ====================================== Home button ===================================================
 const style ="font-size: 22px; border-radius: 40px; background-color: #2c3e50; border: 0; color: white; padding: 18px 28px; cursor: pointer; margin: 40px 0 0 40px;";
 const homeButton = createTag("button", "id", "homeButton", "onclick", "window.location.href = './index.html'", "style", style);
 homeButton.textContent = "Accueil";
 document.querySelector(".cart__order__form__submit").append(homeButton);
+
+function submitForm() {
+    const form = document.querySelector(".cart__order__form");
+    
+    makeObjectContact(".cart__order__form");
+    makeObjectProducts();
+
+    const body = {
+        contact: makeObjectContact(".cart__order__form"),
+        products: makeObjectProducts()
+    }
+    // console.log(body);
+}
+
+
+function makeObjectContact(selector) {
+    const form = document.querySelector(selector);
+    let contact = new Object();
+    for (let item of form.elements) {
+        contact[item.name] = item.value;
+    }
+    // console.log(contact)
+    return contact
+}
+
+
+function makeObjectProducts() {
+    let products = [];
+    localStorage.removeItem("catalog");
+    for (let i = 0; i < localStorage.length; i++) {
+        products[i] = localStorage.key(i);
+    }
+    // console.log(products)
+    return products
+}
+
+
+// const body = {
+//     contact: makeObjectContact(".cart__order__form"),
+//     products: makeObjectProducts()
+// }
+
+// const jsonBody = JSON.stringify(body);
+// console.log(body)
+// console.log(jsonBody)
+
+
+const contact =  {firstName: "Michel", lastName: "Dupont",  address: "14 rue de la pompe", city: "Paris", email: "moi@sfr.fr"};
+const products = ["123456", "789456", "456789"];
+console.log({contact, products})
+console.log(JSON.stringify({contact, products}))
+
+fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({contact, products})
+})
+    .then(response => response.json()
+        .then(data => console.log(data))
+    )
+    .catch(error => console.log(error));
 

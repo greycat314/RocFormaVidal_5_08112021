@@ -1,45 +1,41 @@
 import { displayId } from "./mod/utils.js";
 import { removeChild } from "./mod/manipDom.js";
-import { formData } from "./mod/dataCache.js";
-import { formDataTable } from "./mod/dataCache.js";
+import { getParamsFromUrl } from "./mod/dataCache.js";
+import { getFormEntries } from "./mod/dataCache.js";
 
 
-// Order id
-const orderId = Date.now();
-displayId(orderId);
+// // Order id
+// const number = Date.now();
+// displayId(number);
+// const orderId = {"orderId" :  number}
 
+// // Product
+// const data = {"data" : localStorage}
 
-// Product table
-delete localStorage.catalog; // Remove item "catalog" of Product table
-console.log(localStorage)
-// const tab = (localStorage["107fb5b75607497b96722bda5b504926-Blue"])
-// console.log(tab)
-// const files = JSON.parse(tab);
-// console.log(files.name + " - " + files.price + " - " + files.quantity + " - " + files.imgUrl)
+// // Object contact
+// const uri = getFormEntries(getParamsFromUrl()) // Décoder un composant d'un URI
+// const formData = {"contact" : uri}
 
-// Object contact
-const form = new formData(); // Créer un objet
-const uri = formDataTable(form) // Décoder un composant d'un URI
-const object = {...uri} // Convertir un tableau en objet
-console.log(object)
+// // const body = Object.assign(orderId, formData, data);
+// // const contact
 
 
 
-// fetch("http://localhost:3000/api/products")
-//     .then(response => response.json()
-//         .then(data => console.log(data))
-//     )
-//     .catch(error => console.log(error));
+fetch("http://localhost:3000/api/products")
+    .then(response => response.json()
+        .then(data => console.log(data))
+    )
+    .catch(error => console.log(error));
 
 // http://localhost:3000/api/products
 
 
-// fetch("http://localhost:3000/api/products/id/", {
+// fetch("http://localhost:3000/api/products/order", {
 //     method : "POST",
 //     headers : {
 //         "Content-Type": "application/json"
 //     },
-//     body : JSON.stringify(localStorage)
+//     body : JSON.stringify(finalResult)
 // })
 //     .then(response => response.json()
 //         .then(data => console.log(data))
@@ -48,5 +44,5 @@ console.log(object)
 
 
     // localStorage.clear(); A GARDER ??? ET LE BOUTON PANIER A ENLEVER ???
-    removeChild(".limitedWidthBlock > nav > ul", 3); // Delete cart button
+    // remo veChild(".limitedWidthBlock > nav > ul", 3); // Delete cart button
 
