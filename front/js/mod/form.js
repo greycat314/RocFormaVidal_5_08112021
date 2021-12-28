@@ -1,7 +1,8 @@
 export function validateInput(id, pattern, errorMessage = "Erreur.") {
     document
         .querySelector("#" + id)
-        .addEventListener("change", (event) => {
+        .addEventListener("input", (event) => {
+            // validateForm();
             const removeStartAndEndSpace = event.target.value.trim();
             // Multiple spaces are replaced by a single space
             const changeMultipleSpaceByOne = removeStartAndEndSpace.replace(/ {2,}/g, " ");
@@ -16,27 +17,11 @@ export function validateInput(id, pattern, errorMessage = "Erreur.") {
                 document
                     .querySelector("#" + id)
                     .textContent = changeMultipleSpaceByOne;
-                
-                document
-                    .getElementById("order")
-                    .removeAttribute("disabled");
-                    
-                document
-                    .getElementById("order")    
-                    .removeAttribute("style");
             }
             else {
                 document
                     .querySelector("#" + id + "ErrorMsg")
                     .textContent = errorMessage;
-
-                document
-                    .getElementById("order")
-                    .disabled = "true";
-
-                document
-                    .getElementById("order")
-                    .setAttribute("style", "cursor: not-allowed; filter: blur(2px);")
                 
                 document
                     .querySelector("#" + id + "ErrorMsg")
@@ -44,4 +29,3 @@ export function validateInput(id, pattern, errorMessage = "Erreur.") {
             }
         });
 }
-

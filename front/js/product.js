@@ -1,11 +1,5 @@
-import { limitQuantity } from "./mod/utils.js";
-import { thumbnailsBox } from "./mod/utils.js";
-import { changeUrl } from "./mod/utils.js";
-import { isParamInvalid } from "./mod/utils.js";
-import { redirectToHome } from "./mod/utils.js";
-import { displayThumbnails } from "./mod/utils.js";
-import { createTag } from "./mod/manipDom.js";
-import { getColorSofa } from "./mod/manipDom.js";
+import { limitQuantity, thumbnailsBox, changeUrl, isParamInvalid, redirectToHome,  displayThumbnails } from "./mod/utils.js";
+import { createTag, getColorSofa } from "./mod/manipDom.js";
 import { addToCache, subtractFromCache } from "./mod/datacache.js";
 
 
@@ -92,7 +86,7 @@ document.querySelector("div .item__content__addButton").append(cartButton);
 
 
 // ====================================== Functions ===================================================
-/// ========== Change image when color sofa is selected
+// ========== Change image when color sofa is selected
 function displayImage() {
     document
         .getElementById("colors")

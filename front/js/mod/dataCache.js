@@ -1,5 +1,3 @@
-import { limitQuantity } from "./utils.js"
-
 export function subtractFromCache(data) {
     const jsonFiles = localStorage.getItem(data);
     const files = JSON.parse(jsonFiles);

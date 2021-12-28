@@ -1,6 +1,6 @@
 import { createTag } from "./manipDom.js";
-import { activateOrDisable } from "./manipDom.js";
 import { subtractFromCache } from "./dataCache.js";
+
 
 export function limitQuantity(value) {
     if (value == 0) {value = 1;} //  If entering a non-numeric character
@@ -12,6 +12,7 @@ export function limitQuantity(value) {
     }
 }
 
+
 export function updateTotalPrice() {
     let cartTotalPrice = 0;
     for (var i = 0; i < localStorage.length; i++) {
@@ -20,27 +21,30 @@ export function updateTotalPrice() {
             cartTotalPrice += object.price * object.quantity;
         }
     }
-    activateOrDisable("#order", cartTotalPrice);
+    // activateOrDisable("#order", cartTotalPrice);
     return cartTotalPrice
 }
 
+
 export function updateTotalQuantity() {
-    let totalNumberOfArticle = 0;
+    let cartTotalArticle = 0;
     for (var i = 0; i < localStorage.length; i++) {
         const object = subtractFromCache(localStorage.key(i));
 
         if (object.name !== undefined) {
-            totalNumberOfArticle += object.quantity
+            cartTotalArticle += object.quantity
         }
     }
-    return totalNumberOfArticle
+    return cartTotalArticle
 }
+
 
 export function updateQuantity(id, quantity) {
     document
         .getElementById("seeQuantity-" + id)
         .textContent = "Qté : " + quantity;
 }
+
 
 export function displayQuantityAndTotalPrice(value, quantity) {
     let letter = "";
@@ -53,6 +57,7 @@ export function displayQuantityAndTotalPrice(value, quantity) {
         .textContent = value.toLocaleString("fi") + "€";
 }
 
+
 export function removeThumbnail(id) {
     document
     .getElementById("cart__items")
@@ -63,6 +68,7 @@ export function removeThumbnail(id) {
     const totalQuantity = updateTotalQuantity();
     displayQuantityAndTotalPrice(totalPrice, totalQuantity);
 }
+
 
 export function createBoxArticle(name, id, color, src, alt, price,quantity) {
     const article = createTag("article", "class", "cart__item", "id", id, "data-color", color);
@@ -99,10 +105,12 @@ export function createBoxArticle(name, id, color, src, alt, price,quantity) {
     return article
 }
 
+
 export function thumbnailsBox() {
     const div = createTag("div", "id", "thumbnails", "style", "text-align: center; width: 100%; margin-top: 30px;");
     document.querySelector("div .item__content").appendChild(div);
 }
+
 
 export function changeUrl(url, style, color) {
     // http://localhost:3000/images/kanap01Blue.jpeg --> http://localhost:3000/images/kanap01Red.jpeg
@@ -111,13 +119,16 @@ export function changeUrl(url, style, color) {
     return value
 }
 
+
 export function isParamInvalid(param) {
     return param < 0 || param > 8 || Number.isNaN(param) || param == ""
 }
 
+
 export function redirectToHome() {
     window.location. href = "index.html";
 }
+
 
 export function findItemName(url) {
     // http://localhost:3000/images/kanap01.jpeg
@@ -126,21 +137,6 @@ export function findItemName(url) {
     return style
 }
 
-// export function CreateUrl(url, color) {
-//     // http://localhost:3000/images/kanap01.jpeg --> http://localhost:3000/images/kanap01Blue.jpeg
-
-//     // ===== Explode Url
-//     const oldUrl = url.split('/');
-//     const oldSofaName = oldUrl[4].split("."); // ['kanap01', 'jpeg']
-
-//     // ===== Join Url
-//     const colorFilter =  color.split("/").join("");  // Colors : Blue, White, Black/Red, ...
-//     const newSofaName = oldSofaName[0] + colorFilter + "." + oldSofaName[1]; // kanap01Blue.jpeg
-//     oldUrl[4] = newSofaName;
-
-//     newUrl = oldUrl.join("/");
-//     return newUrl
-// }
 
 export function makeLink(index) {
     const lien = document.createElement("a");
@@ -164,6 +160,7 @@ export function createUrl(url, color) {
     const newUrl = oldUrl.join("/");
     return newUrl
 }
+
 
 export function displayThumbnails(item) {
     document.getElementById("thumbnails").textContent = "";

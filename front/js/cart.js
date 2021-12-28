@@ -1,17 +1,16 @@
-import { findItemName, limitQuantity } from "./mod/utils.js";
-import { updateTotalPrice } from "./mod/utils.js";
-import { updateTotalQuantity } from "./mod/utils.js";
-import { updateQuantity } from "./mod/utils.js";
-import { displayQuantityAndTotalPrice } from "./mod/utils.js";
-import { addToCache } from "./mod/datacache.js";
-import { subtractFromCache } from "./mod/datacache.js"; 
-import { removeThumbnail } from "./mod/utils.js";
-import { createBoxArticle } from "./mod/utils.js";
-import { createTag } from "./mod/manipDom.js";
-import { validateInput } from "./mod/manipDom.js";
-import { displayThumbnails } from "./mod/manipDom.js";
+import { updateTotalPrice, updateTotalQuantity, displayQuantityAndTotalPrice } from "./mod/utils.js";
+import { addToCache, subtractFromCache } from "./mod/datacache.js";
+import { createTag, validateInput, displayThumbnails, testIfFormCompleted, removeChild } from "./mod/manipDom.js";
 
+// cart.html page : remove the cart.html link in the header (useless)
+removeChild(".limitedWidthBlock > nav > ul", 3);
 
+const itemNumber = updateTotalQuantity();
+if (itemNumber == 0) {
+    window.location.href = "index.html";
+}
+
+// Extract data
 for (var i = 0; i < localStorage.length; i++) {
     subtractFromCache(localStorage.key(i));
 }
@@ -20,28 +19,30 @@ document
     .querySelector(".cart__order__form")
     .setAttribute("action", "/front/html/confirmation.html");
 
-const totalPrice = updateTotalPrice();
 const totalQuantity = updateTotalQuantity();
+const totalPrice = updateTotalPrice();
+if (totalPrice == 0) {
+    window.location.href = "index.html";
+} 
 displayQuantityAndTotalPrice(totalPrice, totalQuantity);
 
 displayThumbnails();
 
-validateInput("firstName", /^[a-z ]+$/i, "Caractères autorisées : lettres et espacements.", totalQuantity);
-validateInput("lastName", /^[a-z ]+$/i, "Caractères autorisées : lettres et espacements.", totalQuantity);
-validateInput("address", /^[a-z0-9 ]+$/i, "Caractères autorisées : lettres, chiffres et espacements.", totalQuantity);
-validateInput("city", /^[a-z ]+$/i, "Caractères autorisées : lettres et espacements.", totalQuantity);
-validateInput("email", /^[a-z0-9]+[a-z0-9.]+@{1}[a-z0-9.]+[a-z0-9]+$/i, "Caractères autorisées : lettres, point,  un @ est obligatoire. Ne doit pas commencer ou se terminer par un point.", totalQuantity);
+validateInput("firstName", /^[a-z ]+$/i, "Caractères autorisées : lettres et espacements.");
+validateInput("lastName", /^[a-z ]+$/i, "Caractères autorisées : lettres et espacements.");
+validateInput("address", /^[a-z0-9 ]+$/i, "Caractères autorisées : lettres, chiffres et espacements.");
+validateInput("city", /^[a-z ]+$/i, "Caractères autorisées : lettres et espacements.");
+validateInput("email", /^[a-z0-9]+[a-z0-9.]+@{1}[a-z0-9.]+[a-z0-9]+$/i, "Caractères autorisées : lettres, point,  un @ est obligatoire. Ne doit pas commencer ou se terminer par un point.");
 
-if (totalPrice == 0) {
-    document
-        .getElementById("order")
-        .setAttribute("style", "cursor: not-allowed; filter: blur(2px);");
-}
+testIfFormCompleted();
 
-document
-    .querySelector(".cart__order__form")
-    .removeAttribute("action");
-    
+const contact = makeObjectContact(".cart__order__form");
+console.log(contact)
+const products = makeObjectProducts();
+addToCache("contact", contact);
+addToCache("products", products);
+
+
 document
     .querySelector("#order")
     .addEventListener("click", submitForm)
@@ -53,17 +54,31 @@ const homeButton = createTag("button", "id", "homeButton", "onclick", "window.lo
 homeButton.textContent = "Accueil";
 document.querySelector(".cart__order__form__submit").append(homeButton);
 
-function submitForm() {
-    const form = document.querySelector(".cart__order__form");
-    
-    makeObjectContact(".cart__order__form");
-    makeObjectProducts();
 
-    const body = {
-        contact: makeObjectContact(".cart__order__form"),
-        products: makeObjectProducts()
-    }
-    // console.log(body);
+// ====================================== Submit ===================================================
+function submitForm() {
+    const order = document.getElementById("order");
+    order.addEventListener("click", (event) => {
+        const contact = makeObjectContact(".cart__order__form");
+        const products = makeObjectProducts();
+
+        event.preventDefault();
+
+        // on envoie en POST
+        fetch("http://localhost:3000/api/order", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ contact, products }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                localStorage.setItem("order", JSON.stringify(data));
+                document.location.href = "order.html";
+            })
+            .catch((erreur) => console.log("erreur : " + erreur));
+    });
 }
 
 
@@ -79,40 +94,12 @@ function makeObjectContact(selector) {
 
 
 function makeObjectProducts() {
-    let products = [];
+    const products = [];
     localStorage.removeItem("catalog");
     for (let i = 0; i < localStorage.length; i++) {
-        products[i] = localStorage.key(i);
+        const object = subtractFromCache(localStorage.key(i));
+        products[i] = object;
     }
-    // console.log(products)
+    console.log(products)
     return products
 }
-
-
-// const body = {
-//     contact: makeObjectContact(".cart__order__form"),
-//     products: makeObjectProducts()
-// }
-
-// const jsonBody = JSON.stringify(body);
-// console.log(body)
-// console.log(jsonBody)
-
-
-const contact =  {firstName: "Michel", lastName: "Dupont",  address: "14 rue de la pompe", city: "Paris", email: "moi@sfr.fr"};
-const products = ["123456", "789456", "456789"];
-console.log({contact, products})
-console.log(JSON.stringify({contact, products}))
-
-fetch("http://localhost:3000/api/products/order", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({contact, products})
-})
-    .then(response => response.json()
-        .then(data => console.log(data))
-    )
-    .catch(error => console.log(error));
-
