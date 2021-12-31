@@ -1,20 +1,18 @@
 import { subtractFromCache } from "./mod/dataCache.js";
 import { displayOrder } from "./mod/manipDom.js";
 
-const order = localStorage.getItem("order");
-const data = subtractFromCache("order");
-console.log(data)
+// const dataOrder = localStorage.getItem("order");
+// console.log(dataOrder)
 
 
+document
+    .querySelector("#orderId")
+    .textContent = "1259614875963"
 
-fetch("http://localhost:3000/api/products")
-    .then( res => res.json())
-    .then(data => console.log(data))
-    .catch( error => console.log(error));
+document
+    .querySelector("#orderId")
+    .setAttribute("style", "font-size: 1.5rem; font-weight: 600;")
 
 
 displayOrder();
-
-
-
 

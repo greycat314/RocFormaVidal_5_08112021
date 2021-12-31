@@ -112,15 +112,7 @@ export function thumbnailsBox() {
 }
 
 
-export function changeUrl(url, style, color) {
-    // http://localhost:3000/images/kanap01Blue.jpeg --> http://localhost:3000/images/kanap01Red.jpeg
-    const value = url.split('/', 4).join("/") + "/" + style + color + ".jpeg";
-
-    return value
-}
-
-
-export function isParamInvalid(param) {
+export function isUrlParamInvalid(param) {
     return param < 0 || param > 8 || Number.isNaN(param) || param == ""
 }
 
@@ -130,7 +122,7 @@ export function redirectToHome() {
 }
 
 
-export function findItemName(url) {
+export function extractFileNameFromUrl(url) {
     // http://localhost:3000/images/kanap01.jpeg
     const split = url.split('/');
     const style = split[4].split(".")[0]; // kanap01
@@ -138,14 +130,22 @@ export function findItemName(url) {
 }
 
 
-export function makeLink(index) {
+export function createSofaStyleLink(index) {
     const lien = document.createElement("a");
     const href = "./product.html?" + index;
     lien.setAttribute("href", href);
     return lien
 }
 
-export function createUrl(url, color) {
+export function changeUrlSofa(url, style, color) {
+    // http://localhost:3000/images/kanap01Blue.jpeg --> http://localhost:3000/images/kanap01Red.jpeg
+    const value = url.split('/', 4).join("/") + "/" + style + color + ".jpeg";
+
+    return value
+}
+
+
+export function createUrlForEveryColor(url, color) {
     // http://localhost:3000/images/kanap01.jpeg --> http://localhost:3000/images/kanap01Blue.jpeg
 
     // ===== Explode Url

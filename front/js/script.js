@@ -1,7 +1,9 @@
-import { findItemName } from "./mod/utils.js";
-import { makeLink } from "./mod/utils.js";
-import { createUrl } from "./mod/utils.js";
+import { extractFileNameFromUrl } from "./mod/utils.js";
+import { createSofaStyleLink } from "./mod/utils.js";
+import { createUrlForEveryColor } from "./mod/utils.js";
 import { createTag } from "./mod/manipDom.js";
+
+extractFileNameFromUrl
 
 fetch("http://localhost:3000/api/products")
     .then(response => response.json())
@@ -17,15 +19,15 @@ fetch("http://localhost:3000/api/products")
             const color = sofa.colors[0].split("/").join("");   // Colors : Blue, White, Black/Red, ...
             sofa.color = color;
 
-            const style = findItemName(sofa.imageUrl);
+            const style = extractFileNameFromUrl(sofa.imageUrl);
             sofa.style = style;
             // ===== Rename the image of every sofa (append the first color)
             // http://localhost:3000/images/kanap01.jpeg --> http://localhost:3000/images/kanap01Blue.jpeg
-            const url = createUrl(sofa.imageUrl, color);
+            const url = createUrlForEveryColor(sofa.imageUrl, color);
             sofa.imageUrl = url;
 
             // ===== Html structure
-            const link = makeLink(i);
+            const link = createSofaStyleLink(i);
 
             const image = createTag("img", "src", sofa.imageUrl, "altTxt", altTxt, "width", 160, "height", 160);
 

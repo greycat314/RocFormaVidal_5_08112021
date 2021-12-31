@@ -38,9 +38,9 @@ export  function removeChild(pattern, childNumber) {
     const child = document.querySelector(pattern).childNodes[childNumber];
     parent.removeChild(child);
 }
-testIfFormCompleted
 
-export function testIfFormCompleted() {
+
+export function enableOrDisableCommandButton() {
     let contact = { 
         firstName: document.getElementById("firstName").value,
         lastName: document.getElementById("lastName").value,
@@ -68,7 +68,7 @@ export function validateInput(id, pattern, errorMessage = "Erreur.") {
     document
         .querySelector("#" + id)
         .addEventListener("change", (event) => {
-            testIfFormCompleted();
+            enableOrDisableCommandButton();
 
             const removeStartAndEndSpace = event.target.value.trim();
             // Multiple spaces are replaced by a single space

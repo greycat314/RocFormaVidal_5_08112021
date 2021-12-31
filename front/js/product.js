@@ -1,4 +1,4 @@
-import { limitQuantity, thumbnailsBox, changeUrl, isParamInvalid, redirectToHome,  displayThumbnails } from "./mod/utils.js";
+import { limitQuantity, thumbnailsBox, changeUrlSofa, isUrlParamInvalid, redirectToHome,  displayThumbnails } from "./mod/utils.js";
 import { createTag, getColorSofa } from "./mod/manipDom.js";
 import { addToCache, subtractFromCache } from "./mod/datacache.js";
 
@@ -9,7 +9,7 @@ const param = window.location.search.substring(1);
 
 
 // ===================== If manual modification of the value transmitted by the Url =================================
-if (isParamInvalid(param)) redirectToHome();
+if (isUrlParamInvalid(param)) redirectToHome();
 
 
 // ========================================= Data ======================================================
@@ -20,8 +20,8 @@ const cartMap = new Map();
 let currentSofa = subtractFromCache("catalog")[param];
 console.log(subtractFromCache("catalog"))
 
-
-const {colors, color, _id, name, price, imageUrl, description, altTxt, style} = currentSofa; // Destructuring
+// const {colors, color, _id, name, price, imageUrl, description, altTxt, style} = currentSofa;
+const {colors} = currentSofa;
 currentSofa.quantity = Number(1);
 
 
@@ -92,7 +92,7 @@ function displayImage() {
         .getElementById("colors")
         .addEventListener("change", (event) => {
             const colorChoice = event.target.value.split("/").join(""); // Black/Red --> BlackRed
-            const newUrl = changeUrl(currentSofa.imageUrl, currentSofa.style, colorChoice);
+            const newUrl = changeUrlSofa(currentSofa.imageUrl, currentSofa.style, colorChoice);
             document.querySelector(".item__img img").setAttribute("src", newUrl);
             
             currentSofa.color = colorChoice;

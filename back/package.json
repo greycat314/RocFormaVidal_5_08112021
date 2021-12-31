@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors-anywhere": "^0.4.4",
     "express": "^4.16.4",
     "uuid": "^3.3.2"
   }
