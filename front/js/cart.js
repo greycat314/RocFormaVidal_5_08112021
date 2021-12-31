@@ -49,7 +49,7 @@ document.querySelector("#order")
 
     // fetch("http://localhost:3000/api/products/order", {    
     // fetch("http://127.0.0.1:5502/api/products/order", {
-    fetch("http://localhost:3000/api/order", {   
+    fetch("http://localhost:3000/api/products/order", {   
         method: "POST",
         headers: {
             'Accept': 'application/json',
@@ -134,10 +134,8 @@ function makeTableProducts() {
     const products = [];
     localStorage.removeItem("catalog");
     for (let i = 0; i < localStorage.length; i++) {       
-        const key = localStorage.key(i);
-        const id = {
-            _id: key
-        };
+        const id = localStorage.key(i);
+        
         products.push(id);
     }
     return products
