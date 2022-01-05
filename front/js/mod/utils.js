@@ -21,7 +21,6 @@ export function updateTotalPrice() {
             cartTotalPrice += object.price * object.quantity;
         }
     }
-    // activateOrDisable("#order", cartTotalPrice);
     return cartTotalPrice
 }
 
@@ -30,23 +29,23 @@ export function updateTotalQuantity() {
     let cartTotalArticle = 0;
     for (var i = 0; i < localStorage.length; i++) {
         const object = subtractFromCache(localStorage.key(i));
-
+        // if (object.name !== undefined) to exclude the catalog key located in the local storage
         if (object.name !== undefined) {
             cartTotalArticle += object.quantity
-        }
+        }   
     }
     return cartTotalArticle
 }
 
 
-export function updateQuantity(id, quantity) {
+export function updateQuantity(id, quantity, naming) {
     document
-        .getElementById("seeQuantity-" + id)
+        .getElementById(naming + "-seeQuantity-" + id)
         .textContent = "Qté : " + quantity;
 }
 
 
-export function displayQuantityAndTotalPrice(value, quantity) {
+export function     displayQuantityAndTotalPrice(value, quantity) {
     let letter = "";
     if (Number(quantity) > 1) {letter = "s";} else {letter = "";}
     document
@@ -58,20 +57,19 @@ export function displayQuantityAndTotalPrice(value, quantity) {
 }
 
 
-export function removeThumbnail(id) {
+export function removeThumbnail(naming) {
     document
     .getElementById("cart__items")
-    .removeChild(document.getElementById(id));
-    localStorage.removeItem(id);
-
+    .removeChild(document.getElementById(naming));
+    localStorage.removeItem(naming);
     const totalPrice = updateTotalPrice();
     const totalQuantity = updateTotalQuantity();
     displayQuantityAndTotalPrice(totalPrice, totalQuantity);
 }
 
 
-export function createBoxArticle(name, id, color, src, alt, price,quantity) {
-    const article = createTag("article", "class", "cart__item", "id", id, "data-color", color);
+export function createBoxArticle(name, naming, id, color, src, alt, price,quantity) {
+    const article = createTag("article", "class", "cart__item", "id", naming, "data-color", color);
 
     const boxImg = createTag("div", "class", "cart__item__img");
     const img = createTag("img", "width", "120", "height", "120", "src", src, "alt", alt);
@@ -89,13 +87,13 @@ export function createBoxArticle(name, id, color, src, alt, price,quantity) {
 
     // Content settings
     const boxQuantity = createTag("div", "class", "cart__item__content__settings__quantity");
-    const pQuantity = createTag("p", "id", "seeQuantity-" + id, "style", "margin: 5px 10px 5px 0;");
+    const pQuantity = createTag("p", "id", naming + "-seeQuantity-" + id, "style", "margin: 5px 10px 5px 0;");
     pQuantity.textContent = "Qté : " + quantity;
-    const inputQuantity = createTag("input", "type", "number", "class", "itemQuantity", "name", "itemQuantity", "min", 1, "max", 100, "value", quantity, "id", "quantity-" + id);
+    const inputQuantity = createTag("input", "type", "number", "class", "itemQuantity", "name", "itemQuantity", "min", 1, "max", 100, "value", quantity, "id", naming + "-quantity-" + id);
     boxQuantity.append(pQuantity, inputQuantity);
 
     const boxDelete = createTag("div", "class", "cart__item__content__settings__delete", "style", "margin: 10px 0; color: #fff; background-color: red; border-radius: 20px; padding: 5px 0; font-weight: 600; text-align: center; width: 110px;");
-    const pDelete = createTag("p", "class", "deleteItem", "id", "remove-" + id); pDelete.textContent = "Supprimer";
+    const pDelete = createTag("p", "class", "deleteItem", "id", naming + "-remove-" + id); pDelete.textContent = "Supprimer";
     boxDelete.append(pDelete);
 
     boxSettings.append(boxQuantity, boxDelete);
@@ -106,7 +104,7 @@ export function createBoxArticle(name, id, color, src, alt, price,quantity) {
 }
 
 
-export function thumbnailsBox() {
+export function createThumbnailsBox() {
     const div = createTag("div", "id", "thumbnails", "style", "text-align: center; width: 100%; margin-top: 30px;");
     document.querySelector("div .item__content").appendChild(div);
 }
@@ -136,6 +134,7 @@ export function createSofaStyleLink(index) {
     lien.setAttribute("href", href);
     return lien
 }
+
 
 export function changeUrlSofa(url, style, color) {
     // http://localhost:3000/images/kanap01Blue.jpeg --> http://localhost:3000/images/kanap01Red.jpeg
@@ -171,11 +170,11 @@ export function displayThumbnails(item) {
         const {imgUrl, altTxt, quantity, price} = sofa
 
         // Thumbnail
-        const elt = createTag("img", "src", imgUrl, "altTxt", altTxt, "width", 90, "height", 90, "style", "border-radius: 50px; margin: 5px 0;");
+        const img = createTag("img", "src", imgUrl, "altTxt", altTxt, "width", 90, "height", 90, "style", "border-radius: 50px; margin: 5px 0;");
         
         // Thumbnails block
         const div = createTag("div", "id", id, "style", "display: inline-block; width: 140px;");
-        div.appendChild(elt);
+        div.appendChild(img);
         
         // Quantity
         const span = createTag("span");

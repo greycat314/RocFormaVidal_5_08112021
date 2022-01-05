@@ -1,7 +1,6 @@
 import { displayQuantityAndTotalPrice, limitQuantity, updateQuantity, updateTotalPrice, updateTotalQuantity } from "./utils.js";
 import { subtractFromCache,  addToCache } from "./datacache.js";
-
-import { createBoxArticle, removeThumbnail,  } from "./utils.js";
+import { createBoxArticle, removeThumbnail } from "./utils.js";
 
 
 // Create tag with these attributes
@@ -34,7 +33,6 @@ export function enableTag(pattern, ...theAttributes) {
 
 export  function removeChild(pattern, childNumber) {
     const parent = document.querySelector(pattern);
-    // console.log(parent.childNodes)
     const child = document.querySelector(pattern).childNodes[childNumber];
     parent.removeChild(child);
 }
@@ -63,37 +61,29 @@ export function enableOrDisableCommandButton() {
     }
 }
 
-// export function validateInput(id, pattern, errorMessage = "Erreur.", quantity) {
+
 export function validateInput(id, pattern, errorMessage = "Erreur.") {
     document
         .querySelector("#" + id)
-        .addEventListener("change", (event) => {
+        .addEventListener("input", (event) => {
             enableOrDisableCommandButton();
 
-            const removeStartAndEndSpace = event.target.value.trim();
-            // Multiple spaces are replaced by a single space
-            const changeMultipleSpaceByOne = removeStartAndEndSpace.replace(/ {2,}/g, " ");
+            const inputText = event.target.value
 
-            document.querySelector("#" + id).value = changeMultipleSpaceByOne;
-            if (pattern.test(changeMultipleSpaceByOne)) {
+            document.querySelector("#" + id).value = inputText;
+            if (pattern.test(inputText)) {
                 deleteTextContent("#" + id + "ErrorMsg");
-                    
+
+                // Erase leading and trailing spaces.Multiple spaces are replaced by a single space
                 document
                     .querySelector("#" + id)
-                    .textContent = changeMultipleSpaceByOne;
-
-                // if (quantity != 0) {
-                //     // activateOrDisable("#order", 1, "style", "cursor: not-allowed; filter: blur(2px);", "content", "aaaaaaa");
-                    
-                // // document
-                // //     .getElementById("order")    
-                // //     .removeAttribute("style");
-                // }    
+                    .addEventListener("change", (event) => {
+                const inputValue = event.target.value.trim().replace(/ {2,}/g, " ");
+                document.querySelector("#" + id).value = inputValue;
+                });
             }
             else {
                 displayTextContent("#" + id + "ErrorMsg", errorMessage);
-
-                // activateOrDisable("#order", 1);
 
                 document
                     .getElementById("order")
@@ -117,25 +107,6 @@ export function displayTextContent(element, text) {
 }
 
 
-
-
-// export function activateOrDisable(pattern, value, ...theAttributes) {
-//     if (value == 0) {
-//         const item = document.querySelector(pattern);
-//         for (let i = 0; i <= theAttributes.length - 1; i += 2) {
-//             item.setAttribute(theAttributes[i], theAttributes[i+1]);
-//         }
-//         item.disabled = "true";
-//         // document.querySelector(pattern).setAttribute("style", "cursor: not-allowed; filter: blur(2px);")
-//     }
-//     else {
-//         document.querySelector(pattern).removeAttribute("disabled")
-//     }
-// }
-
-
-
-
 export function getColorSofa(colors) {
     for (let tint of colors) {
         let link = document.createElement("option");
@@ -147,11 +118,22 @@ export function getColorSofa(colors) {
 }
 
 
-// export  function removeChild(pattern, childNumber) {
-//     const parent = document.querySelector(pattern);
-//     const child = document.querySelector(pattern).childNodes[childNumber];
-//     parent.removeChild(child);
-// }
+export function displayMessageEmptyCart() {
+    document
+    .querySelector("#cartAndFormContainer > h1")
+    .textContent = "Votre panier est vide";
+
+    document
+        .querySelector(".cart__order")
+        .textContent = "";
+}
+
+
+export function createHomeButton() {
+    const homeButton = createTag("button", "id", "homeButton", "onclick", "window.location.href = './index.html'", "style", "display: block; margin: 0 auto; padding: 18px 28px; font-size: 22px; border-radius: 40px; border: 0; background-color: #2c3e50; color: white;");
+    homeButton.textContent = "Accueil";
+    document.querySelector("#cartAndFormContainer").append(homeButton);
+}
 
 
 export function displayThumbnails() {
@@ -162,34 +144,39 @@ export function displayThumbnails() {
         const quantity = object.quantity;
         const price = object.price;
         const name = object.name;
+        const naming = object.naming
         const color = object.color;
         const id = object.id;
 
-        if (object.name != null) {
-            const article = createBoxArticle(name, id, color, src, alt, price,quantity);
+        // if there is still a sofa in the cart
+        if (object.name !== undefined) {
+            const article = createBoxArticle(name, naming, id, color, src, alt, price,quantity);
 
             document.querySelector("#cart__items").append(article);
 
             document
-                .getElementById("remove-" + id)
+                .getElementById(naming + "-remove-" + id)
                 .addEventListener("click", () => {
-                removeThumbnail(id);
+                // The sofas have an identifier for all colors. A “naming” is required to identify each sofa.
+                removeThumbnail(naming);
                 // If you only have the catalog key in local storage: the cart is empty
-                if (localStorage.length == 1) {
-                    window.location.href = "index.html"
+                if (localStorage.length == 0) {
+                    displayMessageEmptyCart();
+                    createHomeButton();
                 }
             });
 
             document
-                .getElementById("quantity-" + id)
+                .getElementById(naming + "-quantity-" + id)
                 .addEventListener("change", (event) => {
                     event.target.value = limitQuantity(event.target.value);
-                    let currentSofa = subtractFromCache(id);
+                    // let currentSofa = subtractFromCache(id);  // ============================================================
+                    let currentSofa = subtractFromCache(naming);
                     currentSofa.quantity = Number(event.target.value);
                     
-                    addToCache(id, currentSofa)
+                    addToCache(naming, currentSofa)
 
-                    updateQuantity(id, currentSofa.quantity);
+                    updateQuantity(id, currentSofa.quantity, naming);
 
                     const totalPrice = updateTotalPrice();
                     const totalQuantity = updateTotalQuantity();
@@ -249,7 +236,30 @@ export function displayOrder() {
             document.querySelector("#limitedWidthBlock").append(boxOfAllOrders);
         }
     }
-        const thanks = createTag("p", "style", "font-size: 1.4rem;");
-        thanks.textContent = "Merci de votre visite...";
+        const thanks = createTag("p", "style", "font-size: 1.2rem;");
+        thanks.textContent = "Merci d’avoir fait vos achats chez nous...";
         document.querySelector("#limitedWidthBlock").append(thanks);
+}
+
+
+export function displayOrderId(value) {
+    document
+    .querySelector("#orderId")
+    .textContent = value
+
+document
+    .querySelector("#orderId")
+    .setAttribute("style", "display: block; margin-top: 10px; font-size: 1.5rem; font-weight: 600; font-family: 'Comic Sans MS', sans-serif;")
+}
+
+
+export function displayTotalPriceOrder() {
+    const totalPriceTag = createTag("p", "id", "totalPrice", "style", "display: block; border-top: 2px solid #fff; text-align: right; color: #fff; font-size: 1.6rem; font-family: 'Comic Sans MS', sans-serif;");
+const totalPrice = Number(localStorage.getItem("totalPrice")).toLocaleString("fi");
+totalPriceTag
+    .textContent =  "TOTAL : " + totalPrice + "€";
+
+document
+    .querySelector("#allOrders")
+    .append(totalPriceTag)
 }

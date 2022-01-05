@@ -1,7 +1,11 @@
-import { limitQuantity, thumbnailsBox, changeUrlSofa, isUrlParamInvalid, redirectToHome,  displayThumbnails } from "./mod/utils.js";
+// If your cart is empty, there is only the catalog key in the local storage. You cannot display any item
+if (localStorage.getItem("catalog") === null) {
+    window.location.href = "./index.html";
+}
+
+import { limitQuantity, createThumbnailsBox, changeUrlSofa, isUrlParamInvalid, redirectToHome,  displayThumbnails } from "./mod/utils.js";
 import { createTag, getColorSofa } from "./mod/manipDom.js";
 import { addToCache, subtractFromCache } from "./mod/datacache.js";
-
 
 
 // ===================================== url argument ===================================================
@@ -26,7 +30,7 @@ currentSofa.quantity = Number(1);
 
 
 // ========================================= Cart =====================================================
-thumbnailsBox();
+createThumbnailsBox();
 document
     .getElementById("addToCart")
     .addEventListener("click", () => {
@@ -48,7 +52,7 @@ getColorSofa(colors);
 document.querySelector("option").setAttribute("selected", "");
 
 // ========== Change image when color sofa is selected
-displayImage();
+displayNewSofaColor();
 
 
 // ========== Change sofa image when an other sofa color is selected
@@ -69,11 +73,11 @@ class Sofa {
         this.altTxt = altTxt;
         this.description = description;
         this.color = color;
-        this.id = id + "-" + this.color; // An identifier for each color of each sofa
+        this.id = id;
         this.style = style; // kanap01
         // const newDescription = description.split("bleu").join("Bleu");
         // const newColor = color.split("/").join(""); // For sofa with two colors : Black/Yellow --> BlackYellow, ...
-        this.itemName = this.style + this.color;
+        this.naming = this.style + this.color;
     }
 }
 
@@ -84,10 +88,8 @@ cartButton.textContent = "Panier";
 document.querySelector("div .item__content__addButton").append(cartButton);
 
 
-
 // ====================================== Functions ===================================================
-// ========== Change image when color sofa is selected
-function displayImage() {
+function displayNewSofaColor() {
     document
         .getElementById("colors")
         .addEventListener("change", (event) => {
@@ -99,6 +101,7 @@ function displayImage() {
             currentSofa.imageUrl = newUrl;
     });
 }
+
 
 function addToCart(sofa) { 
     const limitedQuantity = limitQuantity(sofa.quantity)
@@ -115,10 +118,11 @@ function addToCart(sofa) {
     );
     
     // ========== Sofas map
-    cartMap.set(item.id, item); 
-    addToCache(item.id, item);
+    cartMap.set(item.naming, item); 
+    addToCache(item.naming, item);
     return cartMap
 }
+
 
 function quantityControl(id) {
     document.getElementById(id).addEventListener("change", (event) => {

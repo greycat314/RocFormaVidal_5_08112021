@@ -1,18 +1,21 @@
-import { subtractFromCache } from "./mod/dataCache.js";
-import { displayOrder } from "./mod/manipDom.js";
+// If we reload the page, we return to index.html because the localStorage is empty
+if (localStorage.length == 0) {
+    window.location.href = "./index.html"
+}
 
-// const dataOrder = localStorage.getItem("order");
-// console.log(dataOrder)
+import { displayOrder,  displayOrderId, displayTotalPriceOrder, removeChild } from "./mod/manipDom.js";
 
+// cart.html page : remove the cart.html link in the header (useless)
+removeChild(".limitedWidthBlock > nav > ul", 3);
 
-document
-    .querySelector("#orderId")
-    .textContent = "1259614875963"
+const str = document.location.href;
+const url = new URL(str);
+const orderId = url.searchParams.get("orderId");
 
-document
-    .querySelector("#orderId")
-    .setAttribute("style", "font-size: 1.5rem; font-weight: 600;")
-
+displayOrderId(orderId);
 
 displayOrder();
 
+displayTotalPriceOrder();
+
+localStorage.clear();

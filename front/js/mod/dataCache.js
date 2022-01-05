@@ -4,6 +4,7 @@ export function subtractFromCache(data) {
     return files
 }
 
+
 export function addToCache(name, data) {
     localStorage.setItem(name, JSON.stringify(data));
 }
