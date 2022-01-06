@@ -64,6 +64,7 @@ function submitForm() {
     .then(response => response.json())
     .then(data => {
         const getOrderId = data.orderId;
+        const totalPrice = updateTotalPrice();
         localStorage.setItem("totalPrice", totalPrice)
         const link = "confirmation.html?orderId=" + getOrderId;
         window.location.href = link;
@@ -73,9 +74,9 @@ function submitForm() {
 }
 
 
-function makeObjectContact(pattern) {
+function    makeObjectContact(pattern) {
     const form = document.querySelector(pattern);
-    let contact = new Object();
+    const contact = new Object();
     for (let item of form.elements) {
         if (item.name != "") {
             contact[item.name] = item.value;

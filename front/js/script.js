@@ -3,7 +3,6 @@ import { createSofaStyleLink } from "./mod/utils.js";
 import { createUrlForEveryColor } from "./mod/utils.js";
 import { createTag } from "./mod/manipDom.js";
 
-extractFileNameFromUrl
 
 fetch("http://localhost:3000/api/products")
     .then(response => response.json())

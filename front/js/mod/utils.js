@@ -4,7 +4,7 @@ import { subtractFromCache } from "./dataCache.js";
 
 export function limitQuantity(value) {
     if (value == 0) {value = 1;} //  If entering a non-numeric character
-    if (value >= 100) {
+    if (Math.abs(value) >= 100) {
         return 100
     }
     else {

@@ -107,7 +107,7 @@ export function displayTextContent(element, text) {
 }
 
 
-export function getColorSofa(colors) {
+export function createListOfColorsOption(colors) {
     for (let tint of colors) {
         let link = document.createElement("option");
         link.setAttribute("value", tint);
@@ -201,11 +201,7 @@ export function displayOrder() {
         const object = subtractFromCache(localStorage.key(i));
         const src = object.imgUrl;
         const alt  = object.altTxt;
-        // const quantity = object.quantity;
-        // const price = object.price;
         const name = object.name;
-        // const color = object.color;
-        // const id = object.id;
 
         if (object.name != null) {
             // ====================================== Html structure ==================================================

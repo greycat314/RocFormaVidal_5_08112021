@@ -1,10 +1,10 @@
-// If your cart is empty, there is only the catalog key in the local storage. You cannot display any item
+// If the catalog is not  in the local storage you cannot display any item
 if (localStorage.getItem("catalog") === null) {
     window.location.href = "./index.html";
 }
 
 import { limitQuantity, createThumbnailsBox, changeUrlSofa, isUrlParamInvalid, redirectToHome,  displayThumbnails } from "./mod/utils.js";
-import { createTag, getColorSofa } from "./mod/manipDom.js";
+import { createTag, createListOfColorsOption } from "./mod/manipDom.js";
 import { addToCache, subtractFromCache } from "./mod/datacache.js";
 
 
@@ -22,9 +22,7 @@ const cartMap = new Map();
 
 // ===================================== Local Storage ==================================================
 let currentSofa = subtractFromCache("catalog")[param];
-console.log(subtractFromCache("catalog"))
 
-// const {colors, color, _id, name, price, imageUrl, description, altTxt, style} = currentSofa;
 const {colors} = currentSofa;
 currentSofa.quantity = Number(1);
 
@@ -48,14 +46,14 @@ document.getElementById("description").textContent = currentSofa.description;
 
 
 // ========== Creation of option tags in select tag (name="color-select")
-getColorSofa(colors);
-document.querySelector("option").setAttribute("selected", "");
-
-// ========== Change image when color sofa is selected
-displayNewSofaColor();
+createListOfColorsOption(colors);
 
 
 // ========== Change sofa image when an other sofa color is selected
+displayNewSofaColor();
+
+
+// ========== Automatically sets the chosen amount of sofa to 1
 document.getElementById("quantity").setAttribute("value", "1");
 
 
@@ -75,8 +73,6 @@ class Sofa {
         this.color = color;
         this.id = id;
         this.style = style; // kanap01
-        // const newDescription = description.split("bleu").join("Bleu");
-        // const newColor = color.split("/").join(""); // For sofa with two colors : Black/Yellow --> BlackYellow, ...
         this.naming = this.style + this.color;
     }
 }
